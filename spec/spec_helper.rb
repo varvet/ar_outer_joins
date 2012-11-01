@@ -1,5 +1,5 @@
 require "active_record"
-require "ar_outer_join"
+require "ar_outer_joins"
 require "pry"
 
 ActiveRecord::Base.establish_connection :adapter => "sqlite3", :database => ":memory:"

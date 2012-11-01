@@ -1,4 +1,4 @@
-module ArOuterJoin
+module ArOuterJoins
   class JoinBuilder
     class OuterJoinError < StandardError; end
 

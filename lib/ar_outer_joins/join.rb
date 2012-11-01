@@ -1,4 +1,4 @@
-module ArOuterJoin
+module ArOuterJoins
   class Join
     attr_reader :klass
 

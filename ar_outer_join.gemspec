@@ -1,5 +1,5 @@
 # -*- encoding: utf-8 -*-
-require File.expand_path('../lib/ar_outer_join/version', __FILE__)
+require File.expand_path('../lib/ar_outer_joins/version', __FILE__)
 
 Gem::Specification.new do |gem|
   gem.authors       = ["Jonas Nicklas"]
@@ -11,9 +11,9 @@ Gem::Specification.new do |gem|
   gem.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   gem.files         = `git ls-files`.split("\n")
   gem.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
-  gem.name          = "ar_outer_join"
+  gem.name          = "ar_outer_joins"
   gem.require_paths = ["lib"]
-  gem.version       = ArOuterJoin::VERSION
+  gem.version       = ArOuterJoins::VERSION
 
   gem.add_dependency "activerecord", "~>3.0"
   gem.add_development_dependency "rspec"
