@@ -2,21 +2,45 @@ require "active_record"
 require "ar_outer_join/version"
 
 module ArOuterJoin
+  class OuterJoinError < StandardError; end
+
+  def self.construct_join(association)
+    table = association.active_record.arel_table
+    primary_key = association.active_record.primary_key
+    joined_table = association.klass.arel_table
+
+    case association.macro
+    when :belongs_to
+      on = Arel::Nodes::On.new(table[association.foreign_key].eq(joined_table[primary_key]))
+      [Arel::Nodes::OuterJoin.new(joined_table, on)]
+    when :has_and_belongs_to_many
+      join_model_table = Arel::Table.new(association.options[:join_table])
+      joined_primary_key = association.klass.primary_key
+
+      on1 = Arel::Nodes::On.new(join_model_table[association.foreign_key].eq(table[primary_key]))
+      on2 = Arel::Nodes::On.new(join_model_table[association.association_foreign_key].eq(joined_table[joined_primary_key]))
+
+      [Arel::Nodes::OuterJoin.new(join_model_table, on1), Arel::Nodes::OuterJoin.new(joined_table, on2)]
+    when :has_many, :has_one
+      on = Arel::Nodes::On.new(joined_table[association.foreign_key].eq(table[primary_key]))
+      [Arel::Nodes::OuterJoin.new(joined_table, on)]
+    else
+      raise OuterJoinError, "don't know what to do with #{association.macro} association"
+    end
+  end
+
   def outer_join(*args)
     return self if args.compact.blank?
 
     args.inject(self) do |scope, arg|
       association = reflect_on_association(arg)
 
-      case association.macro
-      when :belongs_to
-        on = Arel::Nodes::On.new(arel_table[association.foreign_key].eq(association.klass.arel_table[primary_key]))
-        outer_join = Arel::Nodes::OuterJoin.new(association.klass.arel_table, on)
+      if association.is_a? ActiveRecord::Reflection::ThroughReflection
+        scope.joins(*ArOuterJoin.construct_join(association.through_reflection)).
+              joins(*ArOuterJoin.construct_join(association.source_reflection))
       else
-        on = Arel::Nodes::On.new(association.klass.arel_table[association.foreign_key].eq(arel_table[primary_key]))
-        outer_join = Arel::Nodes::OuterJoin.new(association.klass.arel_table, on)
+        scope.joins(*ArOuterJoin.construct_join(association))
       end
-      scope.joins(outer_join)
     end
   end
 end
