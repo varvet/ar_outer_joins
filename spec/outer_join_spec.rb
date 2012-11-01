@@ -30,7 +30,7 @@ class Site < ActiveRecord::Base; end
 class Tag < ActiveRecord::Base; end
 
 describe ActiveRecord::Base do
-  describe ".outer_join" do
+  describe ".outer_joins" do
     context "with belongs_to" do
       it "performs an outer join" do
         category1 = Category.create! :name => "Shoes"
@@ -38,7 +38,7 @@ describe ActiveRecord::Base do
         product1 = Product.create! :category => category1
         product2 = Product.create! :category => category2
         product3 = Product.create! :published => true
-        query = Product.outer_join(:category).where("categories.name = ? OR products.published = ?", "Shirts", true)
+        query = Product.outer_joins(:category).where("categories.name = ? OR products.published = ?", "Shirts", true)
         query.all.should =~ [product2, product3]
       end
 
@@ -50,7 +50,7 @@ describe ActiveRecord::Base do
         product2 = Product.create! :category => category2
         product3 = Product.create! :published => true
         product4 = Product.create! :site => site1
-        query = Product.outer_join(:category, :site).where("sites.name = ? OR categories.name = ? OR products.published = ?", "Elabs", "Shirts", true)
+        query = Product.outer_joins(:category, :site).where("sites.name = ? OR categories.name = ? OR products.published = ?", "Elabs", "Shirts", true)
         query.all.should =~ [product2, product3, product4]
       end
     end
@@ -65,7 +65,7 @@ describe ActiveRecord::Base do
         Image.create! :highres => true, :product => product1
         Image.create! :product => product2
 
-        query = Product.outer_join(:image).where("images.highres = ? OR products.published = ?", true, true)
+        query = Product.outer_joins(:image).where("images.highres = ? OR products.published = ?", true, true)
         query.all.should =~ [product1, product3]
       end
     end
@@ -80,7 +80,7 @@ describe ActiveRecord::Base do
         LineItem.create! :price => 4, :product => product1
         LineItem.create! :product => product2
 
-        query = Product.outer_join(:line_items).where("line_items.price = ? OR products.published = ?", 4, true)
+        query = Product.outer_joins(:line_items).where("line_items.price = ? OR products.published = ?", 4, true)
         query.all.should =~ [product1, product3]
       end
     end
@@ -96,7 +96,7 @@ describe ActiveRecord::Base do
         product4 = Product.create! :published => true
 
 
-        query = Product.outer_join(:tags).where("tags.name = ? OR products.published = ?", "Red", true)
+        query = Product.outer_joins(:tags).where("tags.name = ? OR products.published = ?", "Red", true)
         query.all.should =~ [product2, product3, product4]
       end
     end
@@ -115,7 +115,7 @@ describe ActiveRecord::Base do
         LineItem.create! :product => product2, :basket => basket2
         LineItem.create! :product => product3
 
-        query = Product.outer_join(:baskets).where("baskets.purchased = ? OR products.published = ?", true, true)
+        query = Product.outer_joins(:baskets).where("baskets.purchased = ? OR products.published = ?", true, true)
         query.all.should =~ [product1, product3]
       end
     end
@@ -134,7 +134,7 @@ describe ActiveRecord::Base do
         LineItem.create! :product => product2, :basket => basket2
         LineItem.create! :product => product3
 
-        query = Product.outer_join(:line_items => :basket).where("baskets.purchased = ? OR products.published = ?", true, true)
+        query = Product.outer_joins(:line_items => :basket).where("baskets.purchased = ? OR products.published = ?", true, true)
         query.all.should =~ [product1, product3]
       end
 
@@ -153,7 +153,7 @@ describe ActiveRecord::Base do
 
         Discount.create! :line_item => line_item3, :percentage => 80
 
-        query = Product.outer_join(:line_items => [:basket, :discounts]).where("baskets.purchased = ? OR products.published = ? OR discounts.percentage > ?", true, true, 50)
+        query = Product.outer_joins(:line_items => [:basket, :discounts]).where("baskets.purchased = ? OR products.published = ? OR discounts.percentage > ?", true, true, 50)
         query.all.should =~ [product1, product3, product4]
       end
     end
