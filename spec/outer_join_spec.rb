@@ -20,10 +20,13 @@ class Image < ActiveRecord::Base
   belongs_to :product
 end
 
+class Discount < ActiveRecord::Base
+  belongs_to :line_item
+end
+
 class Basket < ActiveRecord::Base; end
 class Category < ActiveRecord::Base; end
 class Site < ActiveRecord::Base; end
-class Discount < ActiveRecord::Base; end
 class Tag < ActiveRecord::Base; end
 
 describe ActiveRecord::Base do
@@ -114,6 +117,44 @@ describe ActiveRecord::Base do
 
         query = Product.outer_join(:baskets).where("baskets.purchased = ? OR products.published = ?", true, true)
         query.all.should =~ [product1, product3]
+      end
+    end
+
+    context "with nested associations" do
+      it "allows hashes" do
+        product1 = Product.create!
+        product2 = Product.create!
+        product3 = Product.create! :published => true
+        product4 = Product.create!
+
+        basket1 = Basket.create! :purchased => true
+        basket2 = Basket.create! :purchased => false
+
+        LineItem.create! :product => product1, :basket => basket1
+        LineItem.create! :product => product2, :basket => basket2
+        LineItem.create! :product => product3
+
+        query = Product.outer_join(:line_items => :basket).where("baskets.purchased = ? OR products.published = ?", true, true)
+        query.all.should =~ [product1, product3]
+      end
+
+      it "allows hashes with arrays" do
+        product1 = Product.create!
+        product2 = Product.create!
+        product3 = Product.create! :published => true
+        product4 = Product.create!
+
+        basket1 = Basket.create! :purchased => true
+        basket2 = Basket.create! :purchased => false
+
+        line_item1 = LineItem.create! :product => product1, :basket => basket1
+        line_item2 = LineItem.create! :product => product2, :basket => basket2
+        line_item3 = LineItem.create! :product => product4
+
+        Discount.create! :line_item => line_item3, :percentage => 80
+
+        query = Product.outer_join(:line_items => [:basket, :discounts]).where("baskets.purchased = ? OR products.published = ? OR discounts.percentage > ?", true, true, 50)
+        query.all.should =~ [product1, product3, product4]
       end
     end
   end

@@ -29,7 +29,10 @@ ActiveRecord::Base.connection.create_table :sites do |t|
   t.string :name
 end
 
-ActiveRecord::Base.connection.create_table :discounts
+ActiveRecord::Base.connection.create_table :discounts do |t|
+  t.integer :percentage, :default => 0, :null => false
+  t.integer :line_item_id
+end
 
 ActiveRecord::Base.connection.create_table :tags do |t|
   t.string :name

@@ -7,8 +7,15 @@ module ArOuterJoin
     end
 
     def generate(*args)
-      args.compact.map do |arg|
-        JoinBuilder.new(klass.reflect_on_association(arg)).build
+      args.flatten.compact.map do |arg|
+        if arg.is_a?(Hash)
+          arg.map do |key, value|
+            association = klass.reflect_on_association(key)
+            generate(key) + Join.new(association.klass).generate(value)
+          end
+        else
+          JoinBuilder.new(klass.reflect_on_association(arg)).build
+        end
       end
     end
 
