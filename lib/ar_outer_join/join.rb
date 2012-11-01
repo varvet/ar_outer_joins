@@ -6,12 +6,14 @@ module ArOuterJoin
       @klass = klass
     end
 
-    def apply(*args)
-      return klass if args.compact.blank?
-
-      args.inject(klass) do |scope, arg|
-        scope.joins(*JoinBuilder.new(klass.reflect_on_association(arg)).build)
+    def generate(*args)
+      args.compact.map do |arg|
+        JoinBuilder.new(klass.reflect_on_association(arg)).build
       end
+    end
+
+    def apply(*args)
+      klass.joins(generate(*args))
     end
   end
 end
