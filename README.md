@@ -13,7 +13,7 @@ gem "ar_outer_joins"
 
 ## Usage
 
-```
+``` ruby
 require "active_record"
 require "ar_outer_joins"
 
