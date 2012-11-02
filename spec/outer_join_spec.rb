@@ -157,5 +157,44 @@ describe ActiveRecord::Base do
         query.all.should =~ [product1, product3, product4]
       end
     end
+
+    context "with raw hash" do
+      it "allows a join as a string" do
+        category1 = Category.create! :name => "Shoes"
+        category2 = Category.create! :name => "Shirts"
+        product1 = Product.create! :category => category1
+        product2 = Product.create! :category => category2
+        product3 = Product.create! :published => true
+        query = Product.outer_joins("LEFT OUTER JOIN categories ON products.category_id = categories.id")
+        query = query.where("categories.name = ? OR products.published = ?", "Shirts", true)
+        query.all.should =~ [product2, product3]
+      end
+
+      it "allows multiple joins" do
+        category1 = Category.create! :name => "Shoes"
+        category2 = Category.create! :name => "Shirts"
+        product1 = Product.create! :category => category1
+        product2 = Product.create! :category => category2
+        product3 = Product.create! :published => true
+        query = Product.outer_joins(:line_items, "LEFT OUTER JOIN categories ON products.category_id = categories.id")
+        query = query.where("categories.name = ? OR products.published = ?", "Shirts", true)
+        query.all.should =~ [product2, product3]
+      end
+
+      it "allows arel joins" do
+        category1 = Category.create! :name => "Shoes"
+        category2 = Category.create! :name => "Shirts"
+        product1 = Product.create! :category => category1
+        product2 = Product.create! :category => category2
+        product3 = Product.create! :published => true
+
+        on = Arel::Nodes::On.new(Product.arel_table[:category_id].eq(Category.arel_table[:id]))
+        join = Arel::Nodes::OuterJoin.new(Category.arel_table, on)
+
+        query = Product.outer_joins(join)
+        query = query.where("categories.name = ? OR products.published = ?", "Shirts", true)
+        query.all.should =~ [product2, product3]
+      end
+    end
   end
 end
