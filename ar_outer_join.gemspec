@@ -2,8 +2,8 @@
 require File.expand_path('../lib/ar_outer_joins/version', __FILE__)
 
 Gem::Specification.new do |gem|
-  gem.authors       = ["Jonas Nicklas", "Elabs AB"]
-  gem.email         = ["jonas.nicklas@gmail.com", "dev@elabs.se"]
+  gem.authors       = ["Jonas Nicklas", "Elabs AB", "Michael Nowak"]
+  gem.email         = ["jonas.nicklas@gmail.com", "dev@elabs.se", "thexsystem@gmail.com"]
   gem.description   = %q{Adds the missing outer_joins method to ActiveRecord}
   gem.summary       = %q{outer_joins for ActiveRecord}
   gem.homepage      = "http://github.com/elabs/ar_outer_joins"
