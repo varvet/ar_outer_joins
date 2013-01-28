@@ -20,7 +20,7 @@ require "ar_outer_joins"
 class Product
   belongs_to :category
 
-  def published
+  def self.published
     outer_joins(:category).where("categories.published = ? OR products.published = ?", true, true)
   end
 end
