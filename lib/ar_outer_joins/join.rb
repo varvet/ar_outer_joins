@@ -21,7 +21,7 @@ module ArOuterJoins
 
     def apply(*args)
       scope = if klass.all.is_a?(ActiveRecord::Relation) then klass.all else klass.scoped end
-      joins = scope.joins_values.map(&:to_sql)
+      joins = scope.joins_values.select.map { |j| j.to_sql if j.respond_to?(:to_sql) }
       generate(*args).flatten.inject(scope) do |scope, join|
         if joins.include?(join.to_sql)
           scope

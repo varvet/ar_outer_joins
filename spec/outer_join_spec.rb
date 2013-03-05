@@ -158,7 +158,7 @@ describe ActiveRecord::Base do
       end
 
       it "does not perform join more than once" do
-        query = Product.outer_joins(:line_items => [:basket, :discounts])
+        query = Product.outer_joins(:line_items => [:basket, :discounts]).outer_joins("INNER JOIN images ON products.id = images.product_id")
         query = query.outer_joins(:line_items => [:discounts])
         query = query.outer_joins(:line_items)
         query = query.outer_joins(:line_items => :basket)
