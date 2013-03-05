@@ -156,6 +156,14 @@ describe ActiveRecord::Base do
         query = Product.outer_joins(:line_items => [:basket, :discounts]).where("baskets.purchased = ? OR products.published = ? OR discounts.percentage > ?", true, true, 50)
         query.to_a.should =~ [product1, product3, product4]
       end
+
+      it "does not perform join more than once" do
+        query = Product.outer_joins(:line_items => [:basket, :discounts])
+        query = query.outer_joins(:line_items => [:discounts])
+        query = query.outer_joins(:line_items)
+        query = query.outer_joins(:line_items => :basket)
+        query.to_a.should be_empty
+      end
     end
 
     context "with raw hash" do
