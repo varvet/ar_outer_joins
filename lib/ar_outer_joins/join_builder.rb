@@ -24,7 +24,11 @@ module ArOuterJoins
           on = Arel::Nodes::On.new(table[association.foreign_key].eq(joined_table[primary_key]))
           [Arel::Nodes::OuterJoin.new(joined_table, on)]
         when :has_and_belongs_to_many
-          join_model_table = Arel::Table.new(association.options[:join_table])
+          join_model_table = if association.respond_to?(:join_table)
+              Arel::Table.new(association.join_table)
+            else
+              Arel::Table.new(association.options[:join_table])
+            end
           joined_primary_key = association.klass.primary_key
 
           on1 = Arel::Nodes::On.new(join_model_table[association.foreign_key].eq(table[primary_key]))

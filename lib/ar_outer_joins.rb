@@ -8,7 +8,9 @@ module ArOuterJoins
     association_joins, regular_joins = joins.partition do |join|
       join.is_a?(Hash) or join.is_a?(Array) or join.is_a?(Symbol)
     end
-    Join.new(self).apply(*association_joins).joins(*regular_joins)
+    join_set = Join.new(self).apply(*association_joins)
+    join_set = join_set.joins(*regular_joins) unless regular_joins.empty?
+    join_set
   end
 end
 
