@@ -6,11 +6,13 @@ ActiveRecord::Base.establish_connection :adapter => "sqlite3", :database => ":me
 
 ActiveRecord::Base.connection.create_table :products do |t|
   t.integer :category_id
+  t.integer :sub_category_id
   t.integer :site_id
   t.boolean :published, :default => false, :null => false
 end
 
 ActiveRecord::Base.connection.create_table :line_items do |t|
+  t.string :type
   t.integer :product_id
   t.integer :basket_id
   t.integer :discount_id
@@ -22,6 +24,7 @@ ActiveRecord::Base.connection.create_table :baskets do |t|
 end
 
 ActiveRecord::Base.connection.create_table :categories do |t|
+  t.string :type
   t.string :name
 end
 
@@ -35,6 +38,7 @@ ActiveRecord::Base.connection.create_table :discounts do |t|
 end
 
 ActiveRecord::Base.connection.create_table :tags do |t|
+  t.string :type
   t.string :name
 end
 
@@ -43,6 +47,7 @@ ActiveRecord::Base.connection.create_table :products_tags, :id => false do |t|
 end
 
 ActiveRecord::Base.connection.create_table :images do |t|
+  t.string :type
   t.boolean :highres, :default => false, :null => false
   t.integer :product_id
 end
