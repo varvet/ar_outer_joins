@@ -1,0 +1,65 @@
+PATH
+  remote: /Users/dev/Projects/ar_outer_joins
+  specs:
+    ar_outer_joins (0.0.1)
+      activerecord (>= 3.2)
+
+GEM
+  remote: http://rubygems.org/
+  specs:
+    activemodel (4.0.0.beta1)
+      activesupport (= 4.0.0.beta1)
+      builder (~> 3.1.0)
+    activerecord (4.0.0.beta1)
+      activemodel (= 4.0.0.beta1)
+      activerecord-deprecated_finders (~> 0.0.3)
+      activesupport (= 4.0.0.beta1)
+      arel (~> 4.0.0.beta1)
+    activerecord-deprecated_finders (0.0.3)
+    activesupport (4.0.0.beta1)
+      i18n (~> 0.6.2)
+      minitest (~> 4.2)
+      multi_json (~> 1.3)
+      thread_safe (~> 0.1)
+      tzinfo (~> 0.3.33)
+    appraisal (0.5.1)
+      bundler
+      rake
+    arel (4.0.0.beta1)
+    atomic (1.0.1)
+    builder (3.1.4)
+    coderay (1.0.9)
+    diff-lcs (1.2.1)
+    i18n (0.6.4)
+    method_source (0.8.1)
+    minitest (4.6.2)
+    multi_json (1.6.1)
+    pry (0.9.12)
+      coderay (~> 1.0.5)
+      method_source (~> 0.8)
+      slop (~> 3.4)
+    rake (10.0.3)
+    rspec (2.13.0)
+      rspec-core (~> 2.13.0)
+      rspec-expectations (~> 2.13.0)
+      rspec-mocks (~> 2.13.0)
+    rspec-core (2.13.0)
+    rspec-expectations (2.13.0)
+      diff-lcs (>= 1.1.3, < 2.0)
+    rspec-mocks (2.13.0)
+    slop (3.4.3)
+    sqlite3 (1.3.7)
+    thread_safe (0.1.0)
+      atomic
+    tzinfo (0.3.36)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  activerecord (= 4.0.0.beta1)
+  appraisal
+  ar_outer_joins!
+  pry
+  rspec
+  sqlite3

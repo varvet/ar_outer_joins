@@ -50,7 +50,7 @@ describe ActiveRecord::Base do
         product2 = Product.create! :category => category2
         product3 = Product.create! :published => true
         query = Product.outer_joins(:category).where("categories.name = ? OR products.published = ?", "Shirts", true)
-        query.all.should =~ [product2, product3]
+        query.to_a.should =~ [product2, product3]
       end
 
       it "performs an outer join with sti" do
@@ -81,7 +81,7 @@ describe ActiveRecord::Base do
         product3 = Product.create! :published => true
         product4 = Product.create! :site => site1
         query = Product.outer_joins(:category, :site).where("sites.name = ? OR categories.name = ? OR products.published = ?", "Elabs", "Shirts", true)
-        query.all.should =~ [product2, product3, product4]
+        query.to_a.should =~ [product2, product3, product4]
       end
     end
 
@@ -96,7 +96,7 @@ describe ActiveRecord::Base do
         Image.create! :product => product2
 
         query = Product.outer_joins(:image).where("images.highres = ? OR products.published = ?", true, true)
-        query.all.should =~ [product1, product3]
+        query.to_a.should =~ [product1, product3]
       end
 
       it "performs an outer join with sti" do
@@ -129,7 +129,7 @@ describe ActiveRecord::Base do
         LineItem.create! :product => product2
 
         query = Product.outer_joins(:line_items).where("line_items.price = ? OR products.published = ?", 4, true)
-        query.all.should =~ [product1, product3]
+        query.to_a.should =~ [product1, product3]
       end
 
       it "performs an outer join with sti" do
@@ -163,7 +163,7 @@ describe ActiveRecord::Base do
 
 
         query = Product.outer_joins(:tags).where("tags.name = ? OR products.published = ?", "Red", true)
-        query.all.should =~ [product2, product3, product4]
+        query.to_a.should =~ [product2, product3, product4]
       end
 
       it "performs an outer join with sti" do
@@ -201,7 +201,7 @@ describe ActiveRecord::Base do
         LineItem.create! :product => product3
 
         query = Product.outer_joins(:baskets).where("baskets.purchased = ? OR products.published = ?", true, true)
-        query.all.should =~ [product1, product3]
+        query.to_a.should =~ [product1, product3]
       end
 
       it "performs an outer join with sti" do
@@ -245,7 +245,7 @@ describe ActiveRecord::Base do
         LineItem.create! :product => product3
 
         query = Product.outer_joins(:line_items => :basket).where("baskets.purchased = ? OR products.published = ?", true, true)
-        query.all.should =~ [product1, product3]
+        query.to_a.should =~ [product1, product3]
       end
 
       it "allows hashes with arrays" do
@@ -264,7 +264,15 @@ describe ActiveRecord::Base do
         Discount.create! :line_item => line_item3, :percentage => 80
 
         query = Product.outer_joins(:line_items => [:basket, :discounts]).where("baskets.purchased = ? OR products.published = ? OR discounts.percentage > ?", true, true, 50)
-        query.all.should =~ [product1, product3, product4]
+        query.to_a.should =~ [product1, product3, product4]
+      end
+
+      it "does not perform join more than once" do
+        query = Product.outer_joins(:line_items => [:basket, :discounts]).outer_joins("INNER JOIN images ON products.id = images.product_id")
+        query = query.outer_joins(:line_items => [:discounts])
+        query = query.outer_joins(:line_items)
+        query = query.outer_joins(:line_items => :basket)
+        query.to_a.should be_empty
       end
     end
 
@@ -277,7 +285,7 @@ describe ActiveRecord::Base do
         product3 = Product.create! :published => true
         query = Product.outer_joins("LEFT OUTER JOIN categories ON products.category_id = categories.id")
         query = query.where("categories.name = ? OR products.published = ?", "Shirts", true)
-        query.all.should =~ [product2, product3]
+        query.to_a.should =~ [product2, product3]
       end
 
       it "allows multiple joins" do
@@ -288,7 +296,7 @@ describe ActiveRecord::Base do
         product3 = Product.create! :published => true
         query = Product.outer_joins(:line_items, "LEFT OUTER JOIN categories ON products.category_id = categories.id")
         query = query.where("categories.name = ? OR products.published = ?", "Shirts", true)
-        query.all.should =~ [product2, product3]
+        query.to_a.should =~ [product2, product3]
       end
 
       it "allows arel joins" do
@@ -303,7 +311,7 @@ describe ActiveRecord::Base do
 
         query = Product.outer_joins(join)
         query = query.where("categories.name = ? OR products.published = ?", "Shirts", true)
-        query.all.should =~ [product2, product3]
+        query.to_a.should =~ [product2, product3]
       end
     end
   end
