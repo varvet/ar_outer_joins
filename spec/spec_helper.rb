@@ -48,6 +48,10 @@ ActiveRecord::Base.connection.create_table :images do |t|
 end
 
 RSpec.configure do |config|
+  config.expect_with :rspec do |c|
+    c.syntax = [:should, :expect]
+  end
+
   config.around do |example|
     ActiveRecord::Base.transaction do
       example.run
