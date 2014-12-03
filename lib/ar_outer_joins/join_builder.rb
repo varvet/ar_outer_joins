@@ -16,7 +16,7 @@ module ArOuterJoins
         ].flatten
       else
         table = association.active_record.arel_table
-        primary_key = association.active_record.primary_key
+        primary_key = association.options[:primary_key] || association.active_record.primary_key
         joined_table = association.klass.arel_table
 
         case association.macro
