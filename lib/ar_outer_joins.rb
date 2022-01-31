@@ -14,4 +14,6 @@ module ArOuterJoins
   end
 end
 
-ActiveRecord::Base.extend ArOuterJoins
+ActiveSupport.on_load :active_record do
+  extend ArOuterJoins
+end
